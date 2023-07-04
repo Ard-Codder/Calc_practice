@@ -47,7 +47,7 @@ font = pygame.font.Font(None, 36)
 
 
 def create_platform(x, y, p_width, p_height):
-    platform = pygame.Rect(x, y, platform_width, platform_height)
+    platform = pygame.Rect(x, y, p_width, p_height)
     return platform
 
 
@@ -140,6 +140,7 @@ def show_settings():
 
 
 def start_game():
+    print(settings)
     z = [settings.get(key) for key in settings]
     for i in range(len(sets)):
         sets[i] = z[i]
@@ -151,8 +152,8 @@ def start_game():
     ball_x_speed = sets[4]
     ball_y_speed = sets[5]
 
-    player1 = create_platform(5, screen_height / 2 - platform_height / 2, platform_width, platform_height)
-    player2 = create_platform(screen_width - platform_width - 5, screen_height / 2 - platform_height / 2,
+    player1 = create_platform(0, screen_height / 2 - platform_height / 2, platform_width, platform_height)
+    player2 = create_platform(screen_width - platform_width, screen_height / 2 - platform_height / 2,
                               platform_width, platform_height)
 
     ball = pygame.Rect(screen_width / 2 - ball_width / 2, screen_height / 2 - ball_width / 2, ball_width, ball_width)
@@ -198,11 +199,11 @@ def start_game():
             ball_direction_y *= -1
             hitting_the_wall.play()
 
-        if ball.x <= platform_width:
+        if ball.x <= platform_width - ball_width // 2:
             ball_direction_x *= -1
             player2_score += 1
             hitting_the_wall.play()
-        if ball.x >= screen_width - ball_width - platform_width:
+        if ball.x >= screen_width - ball_width - platform_width + ball_width // 2:
             ball_direction_x *= -1
             player1_score += 1
             hitting_the_wall.play()
