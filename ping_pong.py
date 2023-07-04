@@ -28,6 +28,7 @@ settings = {
     "ball_x_speed": 3,
     "ball_y_speed": 3
 }
+
 sets = [platform_width, platform_height, platform_speed, ball_width, ball_x_speed, ball_y_speed]
 
 player1_score = 0
@@ -148,12 +149,12 @@ def start_game():
     collision_sound = mixer.Sound("collision_sound.mp3")
 
     while running:
+        keys = pygame.key.get_pressed()
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or keys[K_ESCAPE]:
                 pygame.quit()
                 quit()
 
-        keys = pygame.key.get_pressed()
         if keys[K_w] and player1.y - platform_speed > 0:
             player1.y -= platform_speed
         if keys[K_s] and player1.y + platform_speed < screen_height - platform_height:
