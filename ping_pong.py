@@ -9,6 +9,15 @@ screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Ping-Pong")
 
+background_image = pygame.image.load("background_image.jpg").convert()
+background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
+
+mixer.music.load("game_music.mp3")
+mixer.music.play(-1)
+
+music_end_event = pygame.USEREVENT + 1
+pygame.mixer.music.set_endevent(music_end_event)
+
 black = pygame.Color(0, 0, 0)
 white = pygame.Color(255, 255, 255)
 
@@ -44,7 +53,6 @@ def create_platform(x, y, p_width, p_height):
 
 def show_menu():
     intro = True
-
     while intro:
         keys = pygame.key.get_pressed()
         for event in pygame.event.get():
@@ -52,7 +60,13 @@ def show_menu():
                 pygame.quit()
                 quit()
 
-        screen.fill(black)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == music_end_event:
+                mixer.music.play()
+
+        screen.blit(background_image, (0, 0))
         title_text = font.render("Ping-Pong Game", True, white)
         start_text = font.render("1. Start Game", True, white)
         settings_text = font.render("2. Game Settings", True, white)
@@ -78,7 +92,7 @@ def show_menu():
 def show_settings():
     while True:
         clock = pygame.time.Clock()
-        screen.fill(black)
+        screen.blit(background_image, (0, 0))
         settings_text = font.render("Game Settings", True, white)
         screen.blit(settings_text, (screen_width // 2 - settings_text.get_width() // 2, 100))
         y = 200
@@ -90,6 +104,12 @@ def show_settings():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     start_game()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == music_end_event:
+                mixer.music.play()
 
         mouse_pos = pygame.mouse.get_pos()
         mouse_click = pygame.mouse.get_pressed()
@@ -156,6 +176,12 @@ def start_game():
                 pygame.quit()
                 quit()
 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == music_end_event:
+                mixer.music.play()
+
         if keys[K_w] and player1.y - platform_speed > 0:
             player1.y -= platform_speed
         if keys[K_s] and player1.y + platform_speed < screen_height - platform_height:
@@ -185,7 +211,7 @@ def start_game():
             ball_direction_x *= -1
             collision_sound.play()
 
-        screen.fill(black)
+        screen.blit(background_image, (0, 0))
         pygame.draw.rect(screen, white, player1)
         pygame.draw.rect(screen, white, player2)
         pygame.draw.rect(screen, white, ball)
