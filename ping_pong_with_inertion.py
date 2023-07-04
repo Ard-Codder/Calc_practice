@@ -14,7 +14,7 @@ white = pygame.Color(255, 255, 255)
 
 platform_width = 10
 platform_height = 60
-platform_speed = 5
+platform_speed = 1
 
 ball_width = 10
 ball_x_speed = 3
@@ -123,7 +123,6 @@ def start_game():
     z = [settings.get(key) for key in settings]
     for i in range(len(sets)):
         sets[i] = z[i]
-
     platform_width = sets[0]
     platform_height = sets[1]
     platform_speed = sets[2]
@@ -131,8 +130,8 @@ def start_game():
     ball_x_speed = sets[4]
     ball_y_speed = sets[5]
 
-    player1 = create_platform(5, screen_height / 2 - platform_height / 2, platform_width, platform_height)
-    player2 = create_platform(screen_width - platform_width - 5, screen_height / 2 - platform_height / 2,
+    player1 = create_platform(0, screen_height / 2 - platform_height / 2, platform_width, platform_height)
+    player2 = create_platform(screen_width - platform_width, screen_height / 2 - platform_height / 2,
                               platform_width, platform_height)
 
     ball = pygame.Rect(screen_width / 2 - ball_width / 2, screen_height / 2 - ball_width / 2, ball_width, ball_width)
@@ -147,39 +146,48 @@ def start_game():
 
     mixer.init()
     collision_sound = mixer.Sound("collision_sound.mp3")
-    hitting_the_wall = mixer.Sound("brosok-myacha.mp3")
+
+    # Initialize variables for momentum
+    player1_momentum = 0
+    player2_momentum = 0
 
     while running:
         keys = pygame.key.get_pressed()
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or keys[K_ESCAPE]:
+            if event.type == pygame.quit or keys[K_ESCAPE]:
                 pygame.quit()
                 quit()
 
+        # Update momentum based on key presses
         if keys[K_w] and player1.y - platform_speed > 0:
-            player1.y -= platform_speed
+            player1_momentum -= platform_speed
         if keys[K_s] and player1.y + platform_speed < screen_height - platform_height:
-            player1.y += platform_speed
+            player1_momentum += platform_speed
         if keys[K_UP] and player2.y - platform_speed > 0:
-            player2.y -= platform_speed
+            player2_momentum -= platform_speed
         if keys[K_DOWN] and player2.y + platform_speed < screen_height - platform_height:
-            player2.y += platform_speed
+            player2_momentum += platform_speed
+
+        # Apply momentum to players' vertical position
+        player1.y += player1_momentum
+        player2.y += player2_momentum
+
+        # Simulate momentum decay
+        player1_momentum *= 0.8
+        player2_momentum *= 0.8
 
         ball.x += ball_x_speed * ball_direction_x
         ball.y += ball_y_speed * ball_direction_y
 
         if ball.y <= 0 or ball.y >= screen_height - ball_width:
             ball_direction_y *= -1
-            hitting_the_wall.play()
 
-        if ball.x <= platform_width:
+        if ball.x <= 0:
             ball_direction_x *= -1
             player2_score += 1
-            hitting_the_wall.play()
-        if ball.x >= screen_width - ball_width - platform_width:
+        if ball.x >= screen_width - ball_width:
             ball_direction_x *= -1
             player1_score += 1
-            hitting_the_wall.play()
 
         if ball.colliderect(player1) or ball.colliderect(player2):
             ball_direction_x *= -1
@@ -200,3 +208,4 @@ def start_game():
 
 
 show_menu()
+
