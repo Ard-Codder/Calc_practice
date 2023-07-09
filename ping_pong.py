@@ -33,7 +33,7 @@ settings = {
     "platform_width": 10,
     "platform_height": 60,
     "platform_speed": 5,
-    "ball_width": 10,
+    "ball_diameter": 10,
     "ball_x_speed": 3,
     "ball_y_speed": 3
 }
@@ -96,9 +96,9 @@ def show_settings():
         settings_text = font.render("Game Settings", True, white)
         screen.blit(settings_text, (screen_width // 2 - settings_text.get_width() // 2, 100))
         y = 200
-
+        keys = pygame.key.get_pressed()
         for event in pygame.event.get():
-            if event.type == pygame.K_ESCAPE:
+            if event.type == pygame.QUIT or keys[K_ESCAPE]:
                 pygame.quit()
                 quit()
             elif event.type == pygame.KEYDOWN:
@@ -128,11 +128,29 @@ def show_settings():
 
             # Уменьшение значения параметра по щелчку на стрелку влево
             if decrease_arrow_rect.collidepoint(mouse_pos) and mouse_click[0] == 1:
-                settings[key] -= 1
+                if key == "platform_width" and settings[key] == 5:
+                    pass
+                elif key == "platform_height" and settings[key] == 10:
+                    pass
+                elif key == "ball_diameter" and settings[key] == 10:
+                    pass
+                elif (key == "ball_x_speed" or key == "ball_y_speed" or key == "platform_speed") and settings[key] == 1:
+                    pass
+                else:
+                    settings[key] -= 1
             # Увеличение значения параметра по щелчку на стрелку вправо
             if increase_arrow_rect.collidepoint(mouse_pos) and mouse_click[0] == 1:
-                settings[key] += 1
-
+                if key == "platform_width" and settings[key] == 25:
+                    pass
+                elif key == "platform_height" and settings[key] == screen_height:
+                    pass
+                elif key == "ball_diameter" and settings[key] == 400:
+                    pass
+                elif (key == "ball_x_speed" or key == "ball_y_speed" or key == "platform_speed") and settings[
+                    key] == 50:
+                    pass
+                else:
+                    settings[key] += 1
             y += 30
 
         pygame.display.update()
